@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from typing import Optional
 
 
 class UserCreate(BaseModel):
@@ -33,6 +34,9 @@ class DiaryResponse(BaseModel):
     content: str
     created_at: datetime
     user_id: int
+    emotion: Optional[str]
+    image_url: Optional[str]
+
 
     class Config:
         orm_mode = True

@@ -6,7 +6,7 @@ from typing import List
 from database import SessionLocal
 from models import Diary, User
 from schemas import DiaryCreate, DiaryUpdate, DiaryResponse
-from utils import verify_token
+from utils import verify_token, analyze_emotion_and_get_image
 
 router = APIRouter(prefix="/diaries", tags=["Diary"])
 
@@ -43,10 +43,20 @@ def create_diary(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    try:
+        analysis_result = analyze_emotion_and_get_image(diary_data.content)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    emotion_val = analysis_result.get("emotion")
+    image_url_val = analysis_result.get("image_url")
+
     new_diary = Diary(
         title=diary_data.title,
         content=diary_data.content,
-        user_id=current_user.id
+        user_id=current_user.id,
+        emotion = emotion_val,
+        image_url = image_url_val
     )
     db.add(new_diary)
     db.commit()

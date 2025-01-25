@@ -24,6 +24,7 @@ class Diary(Base):
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"))
-
+    emotion = Column(String(50), nullable=True)
+    image_url = Column(String(300), nullable=True)
 
     owner = relationship("User", back_populates="diaries")
